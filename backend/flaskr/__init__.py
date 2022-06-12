@@ -14,6 +14,11 @@ BOOKS_PER_SHELF = 8
 #   - Make sure for each route that you're thinking through when to abort and with which kind of error
 #   - If you change any of the response body keys, make sure you update the frontend to correspond.
 
+def paginated_books(books,page):
+    start = (page - 1) * BOOKS_PER_SHELF
+    end = start + BOOKS_PER_SHELF
+    formatted_books = [ book.format() for book in books ]
+    return formatted_books[start:end]
 
 def create_app(test_config=None):
     # create and configure the app
@@ -43,15 +48,12 @@ def create_app(test_config=None):
         books = Book.query.all()
         page = request.args.get('page', 1, type=int)
 
-        start = (page - 1) * BOOKS_PER_SHELF
-        end = start + BOOKS_PER_SHELF
-
-        formatted_books = [ book.format() for book in books ]
+        formatted_books = paginated_books(books,page)
 
         return jsonify({
             "success": True,
-            "books" : formatted_books[start:end],
-            "total_books" : len(formatted_books)
+            "books" : formatted_books,
+            "total_books" : len(books)
         })
 
     # @TODO: Write a route that will update a single book's rating.
@@ -81,7 +83,29 @@ def create_app(test_config=None):
     #        Response body keys: 'success', 'books' and 'total_books'
 
     # TEST: When completed, you will be able to delete a single book by clicking on the trashcan.
+    @app.route("/books/<int:book_id>", methods=["DELETE"])
+    def delete_book(book_id):
+        try:
+            book = Book.query.get(book_id)           
 
+            if book is not None:
+                book.delete()
+                books = Book.query.all()
+                page = request.args.get('page', 1, type=int)
+
+                formatted_books = paginated_books(books,page)
+
+                return jsonify(
+                    { 
+                    "success": True,
+                    "deleted": book_id,
+                    "books": formatted_books,
+                    "total_books": len(books)
+                    })
+            else:
+                abort(404)
+        except:
+            abort(422)
     # @TODO: Write a route that create a new book.
     #        Response body keys: 'success', 'created'(id of created book), 'books' and 'total_books'
     # TEST: When completed, you will be able to a new book using the form. Try doing so from the last page of books.
