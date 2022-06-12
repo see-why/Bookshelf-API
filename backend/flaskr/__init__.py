@@ -49,7 +49,7 @@ def create_app(test_config=None):
         formatted_books = [ book.format() for book in books ]
 
         return jsonify({
-            "success": "true",
+            "success": True,
             "books" : formatted_books[start:end],
             "total_books" : len(formatted_books)
         })
@@ -59,6 +59,22 @@ def create_app(test_config=None):
     #         and should follow API design principles regarding method and route.
     #         Response body keys: 'success'
     # TEST: When completed, you will be able to click on stars to update a book's rating and it will persist after refresh
+    @app.route("/books/<int:book_id>", methods=["PATCH"])
+    def update_ratings(book_id):
+        body = request.get_json
+
+        try:
+            book = Book.query.get(book_id)
+
+            if book is not None:
+                book.rating = int(body.get("rating"))
+                book.update()
+
+                return jsonify({ "success": True})
+            else:
+                abort(404)
+        except:
+            abort(400)
 
     # @TODO: Write a route that will delete a single book.
     #        Response body keys: 'success', 'deleted'(id of deleted book), 'books' and 'total_books'
