@@ -110,5 +110,28 @@ def create_app(test_config=None):
     #        Response body keys: 'success', 'created'(id of created book), 'books' and 'total_books'
     # TEST: When completed, you will be able to a new book using the form. Try doing so from the last page of books.
     #       Your new book should show up immediately after you submit it at the end of the page.
+    @app.route('/books', methods=['POST'])
+    def create_book():
+        body = request.get_json
 
+        title = body.get('title', None)
+        author = body.get('author', None)
+        rating = body.get('rating', None)
+
+        books = Book.query.all()
+        page = request.args.get('page', 1, type=int)
+        formatted_books = paginated_books(books,page)
+
+        try:
+            book = Book(author=author, title=title, rating=rating)
+            book.insert()
+
+            return jsonify({
+                "success": True,
+                "created": book.id,
+                "books": formatted_books,
+                "total_books": len(books)
+            })
+        except:
+            abort(422)
     return app
