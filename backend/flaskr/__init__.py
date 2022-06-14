@@ -17,6 +17,8 @@ BOOKS_PER_SHELF = 8
 #   - If you change any of the response body keys, make sure you update the frontend to correspond.
 
 def paginated_books(books,page):
+    if len(books) == 0:
+        abort(404)
     start = (page - 1) * BOOKS_PER_SHELF
     end = start + BOOKS_PER_SHELF
     formatted_books = [ book.format() for book in books ]
@@ -66,8 +68,6 @@ def create_app(test_config=None):
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     def update_ratings(book_id):
         body = request.get_json()
-
-        print (f"body #{body}")
 
         try:
             book = Book.query.get(book_id)
@@ -138,6 +138,47 @@ def create_app(test_config=None):
             })
         except:
             abort(422)
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 404,
+            "message": "Not found"
+            }), 404
+
+    @app.errorhandler(400)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 400,
+            "message": "Bad request"
+            }), 400
+
+    @app.errorhandler(405)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 405,
+            "message": "Method not allowed"
+            }), 405
+
+    @app.errorhandler(422)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 422,
+            "message": "Cannot process request"
+            }), 422
+    
+    @app.errorhandler(500)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 500,
+            "message": "Server Error"
+            }), 500
+
     return app
 
 
