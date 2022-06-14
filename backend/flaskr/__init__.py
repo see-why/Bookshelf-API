@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy  # , or_
 from flask_cors import CORS
 import random
 
+from sqlalchemy import desc
+
 from models import setup_db, Book
 
 BOOKS_PER_SHELF = 8
@@ -45,7 +47,7 @@ def create_app(test_config=None):
     # TEST: When completed, the webpage will display books including title, author, and rating shown as stars
     @app.route('/books')
     def get_books():
-        books = Book.query.order_by(Book.id).all()
+        books = Book.query.order_by(desc(Book.id)).all()
         page = request.args.get('page', 1, type=int)
 
         formatted_books = paginated_books(books,page)
@@ -120,7 +122,7 @@ def create_app(test_config=None):
         author = body.get('author', None)
         rating = body.get('rating', None)
 
-        books = Book.query.order_by(Book.id).all()
+        books = Book.query.order_by(desc(Book.id)).all()
         page = request.args.get('page', 1, type=int)
         formatted_books = paginated_books(books,page)
 
