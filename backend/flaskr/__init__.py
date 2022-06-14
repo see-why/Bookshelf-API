@@ -17,8 +17,6 @@ BOOKS_PER_SHELF = 8
 #   - If you change any of the response body keys, make sure you update the frontend to correspond.
 
 def paginated_books(books,page):
-    if len(books) == 0:
-        abort(404)
     start = (page - 1) * BOOKS_PER_SHELF
     end = start + BOOKS_PER_SHELF
     formatted_books = [ book.format() for book in books ]
@@ -53,6 +51,10 @@ def create_app(test_config=None):
         page = request.args.get('page', 1, type=int)
 
         formatted_books = paginated_books(books,page)
+
+        if len(formatted_books) == 0:
+                    abort(404)
+
 
         return jsonify({
             "success": True,
@@ -98,6 +100,9 @@ def create_app(test_config=None):
                 page = request.args.get('page', 1, type=int)
 
                 formatted_books = paginated_books(books,page)
+
+                if len(formatted_books) == 0:
+                    abort(404)
 
                 return jsonify(
                     { 
