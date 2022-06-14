@@ -45,7 +45,7 @@ def create_app(test_config=None):
     # TEST: When completed, the webpage will display books including title, author, and rating shown as stars
     @app.route('/books')
     def get_books():
-        books = Book.query.all()
+        books = Book.query.order_by(Book.id).all()
         page = request.args.get('page', 1, type=int)
 
         formatted_books = paginated_books(books,page)
@@ -63,7 +63,9 @@ def create_app(test_config=None):
     # TEST: When completed, you will be able to click on stars to update a book's rating and it will persist after refresh
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     def update_ratings(book_id):
-        body = request.get_json
+        body = request.get_json()
+
+        print (f"body #{body}")
 
         try:
             book = Book.query.get(book_id)
@@ -112,13 +114,13 @@ def create_app(test_config=None):
     #       Your new book should show up immediately after you submit it at the end of the page.
     @app.route('/books', methods=['POST'])
     def create_book():
-        body = request.get_json
+        body = request.get_json()
 
         title = body.get('title', None)
         author = body.get('author', None)
         rating = body.get('rating', None)
 
-        books = Book.query.all()
+        books = Book.query.order_by(Book.id).all()
         page = request.args.get('page', 1, type=int)
         formatted_books = paginated_books(books,page)
 
@@ -135,3 +137,5 @@ def create_app(test_config=None):
         except:
             abort(422)
     return app
+
+
