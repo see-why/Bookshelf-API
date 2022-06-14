@@ -52,6 +52,10 @@ def create_app(test_config=None):
 
         formatted_books = paginated_books(books,page)
 
+        if len(formatted_books) == 0:
+                    abort(404)
+
+
         return jsonify({
             "success": True,
             "books" : formatted_books,
@@ -66,8 +70,6 @@ def create_app(test_config=None):
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     def update_ratings(book_id):
         body = request.get_json()
-
-        print (f"body #{body}")
 
         try:
             book = Book.query.get(book_id)
@@ -98,6 +100,9 @@ def create_app(test_config=None):
                 page = request.args.get('page', 1, type=int)
 
                 formatted_books = paginated_books(books,page)
+
+                if len(formatted_books) == 0:
+                    abort(404)
 
                 return jsonify(
                     { 
@@ -138,6 +143,47 @@ def create_app(test_config=None):
             })
         except:
             abort(422)
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 404,
+            "message": "Not found"
+            }), 404
+
+    @app.errorhandler(400)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 400,
+            "message": "Bad request"
+            }), 400
+
+    @app.errorhandler(405)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 405,
+            "message": "Method not allowed"
+            }), 405
+
+    @app.errorhandler(422)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 422,
+            "message": "Cannot process request"
+            }), 422
+    
+    @app.errorhandler(500)
+    def not_found(error):
+        return jsonify({
+            "success": False, 
+            "error": 500,
+            "message": "Server Error"
+            }), 500
+
     return app
 
 
