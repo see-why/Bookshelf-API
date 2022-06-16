@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy  # , or_
 from flask_cors import CORS
@@ -122,6 +123,27 @@ def create_app(test_config=None):
                 "total_books": len(books)
             })
         except:
+            abort(422)
+    
+    @app.route("/books/search", methods=["POST"])
+    def search_books():
+        try:                
+            body = request.get_json()
+            search_item = body.get("search",None)
+
+            if search_item:
+                books = Book.query.order_by(desc(Book.id)).filter(
+                Book.title.ilike('%{}%'.format(search_item))).all()
+                page = request.args.get('page', 1, type=int)
+                formatted_books = paginated_books(books,page)
+
+                return jsonify({
+                    "success": True,
+                    "books" : formatted_books,
+                    "total_books" : len(books)
+                })
+        except:
+            print (sys.exc_info())
             abort(422)
     
     @app.errorhandler(404)
