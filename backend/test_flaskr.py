@@ -34,11 +34,22 @@ class BookTestCase(unittest.TestCase):
         pass
 
 
-# @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
-#        You can feel free to write additional tests for nuanced functionality,
-#        Such as adding a book without a rating, etc.
-#        Since there are four routes currently, you should have at least eight tests.
-# Optional: Update the book information in setUp to make the test database your own!
+    def test_get_paginated_books(self):
+        res = self.client().get("/books")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["total_books"])
+        self.assertTrue(len(data["books"]))
+
+    def test_404_sent_requesting_beyond_valid_page(self):
+        res = self.client().get("/books?page=1000")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Not found")
 
 
 # Make the tests conveniently executable
