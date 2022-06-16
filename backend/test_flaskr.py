@@ -51,6 +51,23 @@ class BookTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "Not found")
 
+    def test_update_book_rating(self):
+        res = self.client().patch("/books/5", json={"rating": 1})
+        data = json.loads(res.data)
+        book = Book.query.filter(Book.id == 5).one_or_none()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertEqual(book.format()["rating"], 1)
+
+    def test_400_for_failed_update(self):
+        res = self.client().patch("/books/5")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Bad request")
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
