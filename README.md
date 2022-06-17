@@ -1,8 +1,9 @@
 # Bookshelf-API
 This project is a virtual bookshelf for Udacity students. Students are able to add their books to the bookshelf, give them a rating, update the rating and search through their book lists.
+The codes are written using [PEP 8 style guide](https://peps.python.org/pep-0008/). 
 
-
-## Local Development 
+## Getting Started
+### Local Development 
 The instructions below are meant for the local setup only. The classroom workspace is already set for your to start practicing. 
 
 #### Pre-requisites
@@ -330,3 +331,23 @@ The API will return three error types when requests fail:
   "success": true
 }
 ```
+
+👤 **Cyril Iyadi**
+
+- GitHub: [@see-why](https://github.com/see-why)
+- LinkedIn: [C.Iyadi](https://www.linkedin.com/in/cyril-iyadi/)
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+Feel free to check the [issues page](../../issues/).
+
+## Show your support
+
+Give a ⭐️ if you like this project!
+
+## Acknowledgments
+- Caryn McCarthy [@cmccarthy15](https://github.com/cmccarthy15), for a great course content
+## 📝 License
+- This project is [MIT](./LICENSE) licensed.
